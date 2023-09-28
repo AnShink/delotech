@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, onMounted, computed } from "vue";
+import { reactive, ref, onMounted, computed } from "vue"
 
 const finalData = ref([]);
 const tableHeaders = reactive([
