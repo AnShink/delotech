@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, onMounted } from 'vue';
+import { reactive, ref, onMounted } from 'vue'
 
 const formData = reactive({
   nameValue: '',
