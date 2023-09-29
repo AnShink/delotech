@@ -1,14 +1,8 @@
 <script setup>
 import { reactive, ref, onMounted } from 'vue'
 
-const formData = reactive({
-  nameValue: '',
-  surnameValue: '',
-  dateValue: '',
-  frameworkValue: 'Vue',
-  messageValue: '',
-  agreementValue: false,
-})
+const formData = reactive({})
+
 const isFilled = ref(false)
 
 const clearForm = () => {
@@ -34,6 +28,11 @@ const fillForm = () => {
 };
 
 onMounted(() => {
+  const formFields = document.querySelectorAll('input, textarea, select');
+  for (let i = 0; i < formFields.length; i++) {
+    const element = formFields[i];
+    formData[element.id] = element.value;
+  }
   if('formData' in localStorage){
     isFilled.value = true
   }
@@ -48,34 +47,34 @@ const submitForm = () =>{
   <div class="wrp">
     <form ref="Form" @submit.prevent="submitForm">
       <div class="form-input">
-        <label class="input-label" for="name">Name:</label>
+        <label class="input-label" for="nameValue">Name:</label>
         <input
             class="input-text"
-            id="name"
+            id="nameValue"
             type="text"
             v-model="formData.nameValue"
         />
       </div>
       <div class="form-input">
-        <label class="input-label" for="surname">Surname: </label>
+        <label class="input-label" for="surnameValue">Surname: </label>
         <input
             class="input-text"
-            id="surname"
+            id="surnameValue"
             type="text"
             v-model="formData.surnameValue"
         />
       </div>
       <div class="form-date">
-        <label for="date">Select date:</label>
+        <label for="dateValue">Select date:</label>
         <input
             class="date"
-            id="date"
+            id="dateValue"
             type="date"
             v-model="formData.dateValue"
         />
       </div>
       <div class="form-select">
-        <select class="select" v-model="formData.frameworkValue">
+        <select id="frameworkValue" class="select" v-model="formData.frameworkValue">
           <option value="Vue">Vue</option>
           <option value="React">React</option>
           <option value="Svelte">Svelte</option>
@@ -85,15 +84,15 @@ const submitForm = () =>{
         <input
             class="checkbox"
             type="checkbox"
-            id="agreement"
+            id="agreementValue"
             v-model="formData.agreementValue"
         />
-        <label for="agreement">I'm agree</label>
+        <label for="agreementValue">I'm agree</label>
       </div>
       <div class="form-textarea">
-        <label for="textarea">Message:</label>
+        <label for="messageValue">Message:</label>
         <textarea
-            id="textarea"
+            id="messageValue"
             class="textarea"
             v-model="formData.messageValue"
         />

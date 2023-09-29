@@ -2,6 +2,9 @@
 import { reactive, ref, onMounted, computed } from "vue"
 
 const finalData = ref([]);
+const finalDataColumns = ref([]);
+const finalDataRecords = ref([]);
+
 const tableHeaders = reactive([
   {id:100, text: 'Number'},
   {id:101, text: 'Name'},
@@ -15,8 +18,10 @@ onMounted(async () => {
   try {
       const response = await fetch('/response.json');
       const jsonData = await response.json();
-      finalData.value = jsonData.resultSets[0].columns;
-    } catch (error) {
+      finalDataColumns.value = jsonData.resultSets[0].columns;
+      finalDataRecords.value = jsonData.resultSets[0].records;
+
+  } catch (error) {
       console.error(error);
   }
 });
