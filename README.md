@@ -1,29 +1,6 @@
-# delotech_tasks
+# DELOTECH
 
-This template should help get you started developing with Vue 3 in Vite.
+Вторая задача:
 
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+Таблицу наполнила данными из json (json положила в корень, название колонок взяла из отдельного объекта). 
+В колонке type: в ячейках с типом данных Boolean вместо текста чекбоксы, в ячейках с типом данных Timestampts ожидаются данный из 8 цифр, которые преобразуются в формат «ДД.ММ.ГГГГ» (значение на данный момент захардкодила, т.к нет данных которые можно преобразовывать, чтобы визуально было видно), в остальных ячейках данный из json.
