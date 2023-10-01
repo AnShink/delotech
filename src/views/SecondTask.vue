@@ -1,86 +1,101 @@
 <script setup>
-import { reactive, ref, onMounted, computed } from "vue"
+import { ref, onMounted } from "vue"
 
-const finalData = ref([]);
-const finalDataColumns = ref([]);
-const finalDataRecords = ref([]);
+const finalData = ref([])
+const finalDataColumns = ([])
+const types = ([])
 
-const tableHeaders = reactive([
-  {id:100, text: 'Number'},
-  {id:101, text: 'Name'},
-  {id:102, text: 'Type'},
-  {id:103, text: 'Number'},
-  {id:104, text: 'Precision'},
-  {id:105, text: 'Scale'},
-])
+const getCellClass = (cellIndex) => {
+  switch (types.value[cellIndex]) {
+    case 'boolean':
+      return {
+        class: 'boolean',
+        content: (cellValue) => ''
+      };
+    case 'timestamptz':
+      return {
+        class: 'timestamptz',
+        content: (cellValue) => formattedDate(cellValue)
+      };
+    default:
+      return {
+        class: '',
+        content: (cellValue) => `${cellValue}`
+      };
+  }
+};
+
+const getCellContent = (cellValue, cellClass) => {
+  const cellContent = getCellClass(cellClass);
+  return cellContent.content(cellValue);
+};
+
+const formattedDate = (cellValue) => {
+  if(cellValue) {
+    const dateStr = cellValue;
+    const year = dateStr.substr(0, 4);
+    const month = dateStr.substr(5, 2);
+    const day = dateStr.substr(8, 2);
+    return `от ${day}.${month}.${year}`;
+  }
+};
 
 onMounted(async () => {
   try {
-      const response = await fetch('/response.json');
-      const jsonData = await response.json();
-      finalDataColumns.value = jsonData.resultSets[0].columns;
-      finalDataRecords.value = jsonData.resultSets[0].records;
-
+    const response = await fetch('/response.json');
+    const jsonData = await response.json();
+    finalData.value = jsonData.resultSets[0].records;
+    finalDataColumns.value = jsonData.resultSets[0].columns;
+    types.value = finalDataColumns.value.map((item) => {
+        return item[Object.keys(item)[4]];
+    });
   } catch (error) {
-      console.error(error);
+    console.error(error);
   }
-});
-
-const initialDate = ref('28092023');
-
-const formattedDate = computed(() => {
-  const dateStr = initialDate.value;
-  if (dateStr.length === 8) {
-    const day = dateStr.substr(0, 2);
-    const month = dateStr.substr(2, 2);
-    const year = dateStr.substr(4, 4);
-
-    return `${day}.${month}.${year}`;
-  }
-  return '';
-});
-
+})
 </script>
 
 <template>
   <div class="wrp">
-    <table class="table">
-      <thead>
-      <tr>
-        <th v-for="header in tableHeaders" :key="header.id">{{ header.text }}</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="row in finalData" :key="row.id">
-        <td>{{ row.index }}</td>
-        <td>{{ row.name }}</td>
-        <td>
-          <template v-if="row.type === 'timestamptz'">
-            {{ formattedDate }}
-          </template>
-          <template v-else-if="row.type === 'boolean'">
-            <input
-                class="checkbox"
-                type="checkbox"
-                :id="`checkbox-${row.index}`"
-            >
-            <label :for="`checkbox-${row.index}`"></label>
-          </template>
-          <template v-else>
-            {{ row.type }}
-          </template>
-        </td>
-        <td>{{ row.length }}</td>
-        <td>{{ row.precision }}</td>
-        <td>{{ row.scale }}</td>
-      </tr>
-      </tbody>
-    </table>
+    <div class="table-responsive">
+      <table ref="table" class="table">
+        <thead>
+          <tr>
+            <th v-for="(item, index) in finalData[0]" :key="index">{{ index + 1 }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(row, rowIndex) in finalData" :key="rowIndex">
+            <td v-for="(cell, cellIndex) in row" :key="cellIndex" :class="getCellClass(cellIndex).class">
+              <template v-if="getCellClass(cellIndex).class === 'boolean'">
+                <input
+                    class="checkbox disabled"
+                    type="checkbox"
+                    :id="`checkbox-${rowIndex}${cellIndex}`"
+                    disabled
+                >
+                <label :for="`checkbox-${rowIndex}${cellIndex}`"></label>
+              </template>
+              <template v-else>
+                {{ getCellContent(cell, cellIndex) }}
+              </template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
+.table-responsive{
+  overflow: auto;
+  position: relative;
+}
 .table{
+  display: inline-block;
+  vertical-align: top;
+  max-width: 100%;
   border: 0.0625rem solid var(--border-2);
   table-layout: fixed;
   width: 100%;
