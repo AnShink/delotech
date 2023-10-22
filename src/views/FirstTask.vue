@@ -38,7 +38,6 @@ onMounted(() => {
   }
 })
 
-
 const submitForm = () =>{
   console.log('Form is ready')
 }
